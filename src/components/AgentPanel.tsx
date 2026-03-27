@@ -1,22 +1,54 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Bot, Plus, FolderOpen, ExternalLink, Search, FileText, Edit, Trash2, Play, Pause } from 'lucide-react'
+import { Bot, Plus, FolderOpen, ExternalLink, Search, FileText, Edit, Trash2, Play, Pause, Loader } from 'lucide-react'
+import { supabase, Agent } from '../lib/supabase'
 
-// Sample agent data
-const sampleAgents = [
-  { id: '1', name: 'Research Agent', description: 'Pesquisas e análise de documentos', status: 'active', icon: '🔍' },
-  { id: '2', name: 'Code Agent', description: 'Desenvolvimento e revisão de código', status: 'active', icon: '💻' },
-  { id: '3', name: 'Writer Agent', description: 'Criação de conteúdo e documentação', status: 'idle', icon: '✍️' },
-  { id: '4', name: 'Data Agent', description: 'Análise de dados e métricas', status: 'active', icon: '📊' },
+// Fallback data if Supabase fails
+const fallbackAgents: Agent[] = [
+  { id: '1', name: 'Research Agent', description: 'Pesquisas e análise de documentos', status: 'active', icon: '🔍', created_at: '', updated_at: '' },
+  { id: '2', name: 'Code Agent', description: 'Desenvolvimento e revisão de código', status: 'active', icon: '💻', created_at: '', updated_at: '' },
+  { id: '3', name: 'Writer Agent', description: 'Criação de conteúdo e documentação', status: 'idle', icon: '✍️', created_at: '', updated_at: '' },
+  { id: '4', name: 'Data Agent', description: 'Análise de dados e métricas', status: 'active', icon: '📊', created_at: '', updated_at: '' },
 ]
 
 export default function AgentPanel() {
+  const [agents, setAgents] = useState<Agent[]>([])
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const filteredAgents = sampleAgents.filter(agent =>
+  useEffect(() => {
+    fetchAgents()
+  }, [])
+
+  const fetchAgents = async () => {
+    try {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from('agents')
+        .select('*')
+        .order('created_at', { ascending: false })
+      
+      if (error) throw error
+      
+      if (data && data.length > 0) {
+        setAgents(data)
+      } else {
+        setAgents(fallbackAgents)
+      }
+    } catch (err: any) {
+      console.warn('Using fallback agents:', err.message)
+      setAgents(fallbackAgents)
+      setError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const filteredAgents = agents.filter(agent =>
     agent.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    agent.description.toLowerCase().includes(searchQuery.toLowerCase())
+    agent.description?.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
   return (
@@ -50,7 +82,11 @@ export default function AgentPanel() {
 
         {/* Agent List */}
         <div className="flex-1 overflow-y-auto p-2 space-y-2">
-          {filteredAgents.map((agent, index) => (
+          {loading ? (
+            <div className="flex items-center justify-center p-8">
+              <Loader className="w-6 h-6 animate-spin text-openclaw-primary" />
+            </div>
+          ) : filteredAgents.map((agent, index) => (
             <motion.button
               key={agent.id}
               onClick={() => setSelectedAgent(agent.id)}
@@ -69,7 +105,7 @@ export default function AgentPanel() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
-                  <span className="text-xl">{agent.icon}</span>
+                  <span className="text-xl">{agent.icon || '🤖'}</span>
                   <div className="min-w-0">
                     <h3 className="font-medium text-openclaw-text truncate">{agent.name}</h3>
                     <p className="text-sm text-openclaw-textMuted truncate">{agent.description}</p>
@@ -97,7 +133,7 @@ export default function AgentPanel() {
       {/* Agent Detail / Empty State */}
       <div className="flex-1 glass rounded-xl overflow-hidden flex flex-col">
         {selectedAgent ? (
-          <AgentDetail agentId={selectedAgent} />
+          <AgentDetail agent={agents.find(a => a.id === selectedAgent)} />
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center text-openclaw-textMuted">
             <div className="w-20 h-20 rounded-2xl bg-openclaw-bg flex items-center justify-center mb-4 border border-openclaw-border">
@@ -112,8 +148,7 @@ export default function AgentPanel() {
   )
 }
 
-function AgentDetail({ agentId }: { agentId: string }) {
-  const agent = sampleAgents.find(a => a.id === agentId)
+function AgentDetail({ agent }: { agent: Agent | undefined }) {
   if (!agent) return null
 
   return (
@@ -122,7 +157,7 @@ function AgentDetail({ agentId }: { agentId: string }) {
       <div className="p-5 border-b border-openclaw-border flex items-center justify-between bg-openclaw-bg/50">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-xl bg-openclaw-primary/20 flex items-center justify-center shadow-glow-primary">
-            <span className="text-3xl">{agent.icon}</span>
+            <span className="text-3xl">{agent.icon || '🤖'}</span>
           </div>
           <div>
             <h2 className="text-xl font-semibold text-openclaw-text">{agent.name}</h2>

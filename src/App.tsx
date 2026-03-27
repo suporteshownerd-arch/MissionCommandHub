@@ -18,11 +18,12 @@ import {
 } from 'lucide-react'
 import Sidebar from './components/Sidebar'
 import AgentPanel from './components/AgentPanel'
+import MCPPanel from './components/MCPPanel'
 import ActivityFeed from './components/ActivityFeed'
 import IntegrationCards from './components/IntegrationCards'
 import SupabaseStatus from './components/SupabaseStatus'
 
-type View = 'agents' | 'kanban' | 'integrations' | 'monitor'
+type View = 'agents' | 'mcp' | 'kanban' | 'integrations' | 'monitor'
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('agents')
@@ -85,6 +86,17 @@ function App() {
                   className="flex-1 overflow-hidden"
                 >
                   <AgentPanel />
+                </motion.div>
+              )}
+              {currentView === 'mcp' && (
+                <motion.div
+                  key="mcp"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="flex-1 overflow-hidden"
+                >
+                  <MCPPanel />
                 </motion.div>
               )}
               {currentView === 'kanban' && (

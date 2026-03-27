@@ -14,7 +14,7 @@ import {
   Command
 } from 'lucide-react'
 
-type View = 'agents' | 'kanban' | 'integrations' | 'monitor' | 'chat'
+type View = 'agents' | 'mcp' | 'kanban' | 'integrations' | 'monitor' | 'chat'
 
 interface SidebarProps {
   collapsed: boolean
@@ -25,6 +25,7 @@ interface SidebarProps {
 
 const menuItems = [
   { id: 'agents', label: 'Agentes', icon: Bot },
+  { id: 'mcp', label: 'MCP Control', icon: Command },
   { id: 'kanban', label: 'Task Board', icon: LayoutDashboard },
   { id: 'integrations', label: 'Integrações', icon: Globe },
   { id: 'monitor', label: 'Monitor', icon: Activity },
