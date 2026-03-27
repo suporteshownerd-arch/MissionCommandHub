@@ -1,18 +1,15 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
-import { 
-  Bot, 
-  LayoutDashboard, 
-  Globe, 
-  Activity, 
+import {
+  Bot,
+  LayoutDashboard,
+  Globe,
+  Activity,
   MessageSquare,
   Sun,
   Moon,
   Bell,
   Search,
-  Command,
-  Plus,
-  FolderOpen
+  Command
 } from 'lucide-react'
 
 type View = 'agents' | 'kanban' | 'integrations' | 'monitor' | 'chat'

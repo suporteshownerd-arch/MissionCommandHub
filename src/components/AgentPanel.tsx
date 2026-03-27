@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Bot, Plus, FolderOpen, ExternalLink, Search, FileText, Edit, Trash2, Play, Pause, Loader } from 'lucide-react'
+import { Bot, Plus, FolderOpen, ExternalLink, Search, FileText, Edit, Trash2, Play, Loader } from 'lucide-react'
 import { supabase, Agent } from '../lib/supabase'
 
 // Fallback data if Supabase fails
@@ -16,7 +16,7 @@ export default function AgentPanel() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
 
   useEffect(() => {
     fetchAgents()

@@ -1,9 +1,5 @@
 import { createClient } from '@supabase/supabase-js'
 
-// Credenciais fornecidas pelo usuário
-const supabaseUrl = 'https://sb-publishable-i-7uiojc0ratsj5qqsvmjg-jmff-okp.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYGnP3M'
-
 // Criar cliente Supabase - usando a chave correta
 export const supabase = createClient(
   'https://sb-publishable-i-7uiojc0ratsj5qqsvmjg-jmff-okp.supabase.co',

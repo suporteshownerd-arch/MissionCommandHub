@@ -7,14 +7,14 @@ import {
   MessageSquare,
   LayoutDashboard,
   Globe,
+  Layers3,
   ChevronLeft,
   ChevronRight,
   Send,
-  User,
   Command
 } from 'lucide-react'
 
-type View = 'agents' | 'mcp' | 'kanban' | 'integrations' | 'monitor' | 'chat'
+type View = 'dashboard' | 'agents' | 'mcp' | 'kanban' | 'integrations' | 'monitor' | 'framework'
 
 interface SidebarProps {
   collapsed: boolean
@@ -24,11 +24,13 @@ interface SidebarProps {
 }
 
 const menuItems = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'agents', label: 'Agentes', icon: Bot },
   { id: 'mcp', label: 'MCP Control', icon: Command },
   { id: 'kanban', label: 'Task Board', icon: LayoutDashboard },
   { id: 'integrations', label: 'Integrações', icon: Globe },
   { id: 'monitor', label: 'Monitor', icon: Activity },
+  { id: 'framework', label: 'Framework', icon: Layers3 },
 ] as const
 
 interface Message {

@@ -1,27 +1,21 @@
 import { useState, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Bot, 
-  Play, 
-  Square, 
-  Terminal, 
-  Wrench, 
-  Activity, 
+import {
+  Bot,
+  Play,
+  Square,
+  Terminal,
+  Wrench,
   Search,
   FileCode,
-  GitBranch,
-  Mail,
   MessageSquare,
   Database,
-  Globe,
   Clock,
   Zap,
   ChevronRight,
-  X,
-  Loader,
   Send
 } from 'lucide-react'
-import { useMCP, mcpTools, commandSuggestions, MCPAgent, MCPTool } from '../lib/mcp'
+import { useMCP, mcpTools, commandSuggestions } from '../lib/mcp'
 
 const categoryIcons: Record<string, React.ElementType> = {
   search: Search,
@@ -40,9 +34,8 @@ const categoryColors: Record<string, string> = {
 }
 
 export default function MCPPanel() {
-  const { agents, tools, logs, executeAgent, stopAgent, useTool, addLog } = useMCP()
+  const { agents, logs, executeAgent, stopAgent, useTool, addLog } = useMCP()
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null)
-  const [selectedTool, setSelectedTool] = useState<string | null>(null)
   const [command, setCommand] = useState('')
   const [activeTab, setActiveTab] = useState<'agents' | 'tools' | 'console'>('agents')
   const logsEndRef = useRef<HTMLDivElement>(null)

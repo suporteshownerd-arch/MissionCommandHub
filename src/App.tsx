@@ -1,34 +1,50 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { 
-  Bot, 
-  Settings, 
-  Activity, 
+import {
+  Bot,
+  Activity,
   Cpu,
   Workflow,
   PanelRightClose,
   PanelRightOpen,
-  Command,
-  Play,
-  Square,
-  Clock,
-  Zap,
-  Wifi,
-  Database
+  Zap
 } from 'lucide-react'
 import Sidebar from './components/Sidebar'
+import Dashboard from './components/Dashboard'
 import AgentPanel from './components/AgentPanel'
 import MCPPanel from './components/MCPPanel'
 import ActivityFeed from './components/ActivityFeed'
 import IntegrationCards from './components/IntegrationCards'
 import SupabaseStatus from './components/SupabaseStatus'
+import FrameworkOverview from './components/FrameworkOverview'
 
-type View = 'agents' | 'mcp' | 'kanban' | 'integrations' | 'monitor'
+type View = 'dashboard' | 'agents' | 'mcp' | 'kanban' | 'integrations' | 'monitor' | 'framework'
 
 function App() {
-  const [currentView, setCurrentView] = useState<View>('agents')
+  const [currentView, setCurrentView] = useState<View>('dashboard')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [activityCollapsed, setActivityCollapsed] = useState(false)
+
+  const renderContent = () => {
+    switch (currentView) {
+      case 'dashboard':
+        return <Dashboard />
+      case 'agents':
+        return <AgentPanel />
+      case 'mcp':
+        return <MCPPanel />
+      case 'kanban':
+        return <KanbanView />
+      case 'integrations':
+        return <IntegrationCards />
+      case 'monitor':
+        return <MonitorView />
+      case 'framework':
+        return <FrameworkOverview />
+      default:
+        return <Dashboard />
+    }
+  }
 
   return (
     <div className="flex h-screen bg-openclaw-bg overflow-hidden">
@@ -37,7 +53,7 @@ function App() {
         collapsed={sidebarCollapsed} 
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
         currentView={currentView}
-        onViewChange={setCurrentView}
+        onViewChange={(view) => setCurrentView(view)}
       />
 
       {/* Main Content */}
@@ -45,25 +61,26 @@ function App() {
         {/* Header Bar */}
         <div className="h-14 border-b border-openclaw-border flex items-center justify-between px-4 bg-openclaw-card/50 backdrop-blur-sm">
           <div className="flex items-center gap-4">
-            {/* Status Indicators */}
-            <div className="flex items-center gap-3">
-              {/* Sistema Online */}
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-openclaw-success animate-pulse" />
-                <span className="text-sm text-openclaw-textMuted">Online</span>
-              </div>
-              
-              {/* OpenClaw Status */}
-              <div className="flex items-center gap-2 px-2 py-1 rounded bg-openclaw-bg border border-openclaw-border">
-                <Wifi className="w-3 h-3 text-openclaw-accent" />
-                <span className="text-xs text-openclaw-textMuted">OpenClaw</span>
-              </div>
-              
-              {/* Supabase Status */}
-              <SupabaseStatus />
+            {/* Sistema Online */}
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-openclaw-success animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.6)]" />
+              <span className="text-sm text-openclaw-text font-medium">Online</span>
             </div>
+            
+            {/* Separator */}
+            <div className="w-px h-6 bg-openclaw-border" />
+            
+            {/* OpenClaw Status */}
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-openclaw-bg border border-openclaw-border">
+              <Zap className="w-3.5 h-3.5 text-openclaw-accent" />
+              <span className="text-xs text-openclaw-textMuted">OpenClaw</span>
+            </div>
+            
+            {/* Supabase Status */}
+            <SupabaseStatus />
           </div>
           
+          {/* Right side */}
           <div className="flex items-center gap-4">
             <span className="text-xs text-openclaw-textMuted font-mono">{new Date().toLocaleTimeString('pt-BR')}</span>
           </div>
@@ -77,61 +94,16 @@ function App() {
             className="flex-1 flex flex-col overflow-hidden p-4"
           >
             <AnimatePresence mode="wait">
-              {currentView === 'agents' && (
-                <motion.div
-                  key="agents"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex-1 overflow-hidden"
-                >
-                  <AgentPanel />
-                </motion.div>
-              )}
-              {currentView === 'mcp' && (
-                <motion.div
-                  key="mcp"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex-1 overflow-hidden"
-                >
-                  <MCPPanel />
-                </motion.div>
-              )}
-              {currentView === 'kanban' && (
-                <motion.div
-                  key="kanban"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex-1 overflow-auto"
-                >
-                  <KanbanView />
-                </motion.div>
-              )}
-              {currentView === 'integrations' && (
-                <motion.div
-                  key="integrations"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex-1 overflow-auto"
-                >
-                  <IntegrationCards />
-                </motion.div>
-              )}
-              {currentView === 'monitor' && (
-                <motion.div
-                  key="monitor"
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex-1 overflow-auto"
-                >
-                  <MonitorView />
-                </motion.div>
-              )}
+              <motion.div
+                key={currentView}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.15 }}
+                className="flex-1 overflow-hidden"
+              >
+                {renderContent()}
+              </motion.div>
             </AnimatePresence>
           </motion.div>
 
@@ -142,7 +114,8 @@ function App() {
                 initial={{ width: 0, opacity: 0 }}
                 animate={{ width: 320, opacity: 1 }}
                 exit={{ width: 0, opacity: 0 }}
-                className="border-l border-openclaw-border flex flex-col overflow-hidden"
+                transition={{ duration: 0.2 }}
+                className="border-l border-openclaw-border flex flex-col overflow-hidden bg-openclaw-card/30"
               >
                 <ActivityFeed />
               </motion.div>
@@ -152,7 +125,7 @@ function App() {
           {/* Toggle Activity Button */}
           <button
             onClick={() => setActivityCollapsed(!activityCollapsed)}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-lg bg-openclaw-card border border-openclaw-border text-openclaw-textMuted hover:text-openclaw-primary hover:border-openclaw-primary/50 transition-colors"
+            className="absolute right-4 top-1/2 -translate-y-1/2 z-10 p-2 rounded-lg bg-openclaw-card border border-openclaw-border text-openclaw-textMuted hover:text-openclaw-primary hover:border-openclaw-primary/50 transition-all shadow-lg"
           >
             {activityCollapsed ? <PanelRightOpen className="w-4 h-4" /> : <PanelRightClose className="w-4 h-4" />}
           </button>
@@ -175,6 +148,7 @@ function KanbanView() {
     { title: 'Revisar PR #42', column: 'Review' },
     { title: 'Deploy staging', column: 'In Progress' },
     { title: 'Atualizar documentação', column: 'Done' },
+    { title: 'Criar testes unitários', column: 'Backlog' },
   ]
   
   return (
@@ -182,7 +156,7 @@ function KanbanView() {
       {columns.map((column) => (
         <div 
           key={column.name}
-          className="flex-shrink-0 w-72 bg-openclaw-card rounded-xl border border-openclaw-border flex flex-col"
+          className="flex-shrink-0 w-72 glass rounded-xl border flex flex-col"
         >
           <div className="p-4 border-b border-openclaw-border">
             <h3 className="font-semibold text-openclaw-text flex items-center gap-2">
@@ -197,11 +171,11 @@ function KanbanView() {
             {tasks.filter(t => t.column === column.name).map((task, i) => (
               <div 
                 key={i}
-                className="bg-openclaw-bgHover rounded-lg p-3 border border-openclaw-border hover:border-openclaw-primary/30 transition-colors cursor-pointer group"
+                className="bg-openclaw-bgHover rounded-lg p-3 border border-openclaw-border hover:border-openclaw-primary/30 hover:shadow-lg hover:shadow-openclaw-primary/5 transition-all cursor-pointer group"
               >
                 <p className="text-sm text-openclaw-text group-hover:text-openclaw-primary transition-colors">{task.title}</p>
                 <div className="flex items-center gap-2 mt-2">
-                  <Clock className="w-3 h-3 text-openclaw-textMuted" />
+                  <Activity className="w-3 h-3 text-openclaw-textMuted" />
                   <span className="text-xs text-openclaw-textMuted">Hoje</span>
                 </div>
               </div>
@@ -224,7 +198,7 @@ function MonitorView() {
   const agents = [
     { name: 'Research Agent', status: 'running', tasks: 5 },
     { name: 'Code Agent', status: 'running', tasks: 3 },
-    { name: 'Data Agent', status: 'idle', tasks: 0 },
+    { name: 'Writer Agent', status: 'idle', tasks: 0 },
   ]
 
   return (
@@ -261,13 +235,13 @@ function MonitorView() {
               className="flex items-center justify-between p-3 rounded-lg bg-openclaw-bg border border-openclaw-border hover:border-openclaw-primary/30 transition-colors"
             >
               <div className="flex items-center gap-3">
-                <div className={`w-2.5 h-2.5 rounded-full ${agent.status === 'running' ? 'bg-openclaw-success animate-pulse' : 'bg-openclaw-textMuted'}`} />
+                <div className={`w-2.5 h-2.5 rounded-full ${agent.status === 'running' ? 'bg-openclaw-success animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-openclaw-textMuted'}`} />
                 <span className="font-medium text-openclaw-text">{agent.name}</span>
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-sm text-openclaw-textMuted">{agent.tasks} tarefas</span>
                 <button className="p-1.5 rounded hover:bg-openclaw-cardHover text-openclaw-textMuted hover:text-openclaw-text transition-colors">
-                  {agent.status === 'running' ? <Square className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                  {agent.status === 'running' ? <Activity className="w-4 h-4 text-openclaw-success" /> : <Bot className="w-4 h-4" />}
                 </button>
               </div>
             </div>

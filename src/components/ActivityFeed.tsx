@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Activity, Bot, Zap, Clock, AlertCircle, CheckCircle, ArrowRight, X } from 'lucide-react'
+import { Activity, Bot, Zap, Clock, CheckCircle, ArrowRight, X } from 'lucide-react'
 
 // Sample activity data
 const sampleActivities = [

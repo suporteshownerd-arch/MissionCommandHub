@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { supabase } from './supabase'
 
 // MCP Tools definitions
@@ -52,7 +52,7 @@ export function useMCP() {
   const [tools] = useState<MCPTool[]>(mcpTools)
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null)
   const [logs, setLogs] = useState<string[]>([])
-  const [running, setRunning] = useState(false)
+  const [running] = useState(false)
 
   // Executar comando em agente
   const executeAgent = useCallback(async (agentId: string, command: string) => {
