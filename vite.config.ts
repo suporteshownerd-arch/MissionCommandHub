@@ -15,8 +15,8 @@ export default defineConfig({
             if (id.includes('react') || id.includes('react-dom')) {
               return 'react-vendor'
             }
-            if (id.includes('framer-motion')) {
-              return 'motion-vendor'
+            if (id.includes('@supabase')) {
+              return 'supabase-vendor'
             }
             if (id.includes('lucide-react')) {
               return 'icons-vendor'
