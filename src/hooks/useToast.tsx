@@ -1,5 +1,4 @@
 import { useState, useCallback, createContext, useContext, ReactNode } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { X, CheckCircle, AlertCircle, Info, AlertTriangle } from 'lucide-react'
 
 type ToastType = 'success' | 'error' | 'info' | 'warning'
@@ -31,7 +30,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
   const addToast = useCallback((type: ToastType, message: string, duration = 5000) => {
     const id = Date.now().toString()
     setToasts(prev => [...prev, { id, type, message, duration }])
-    
     if (duration > 0) {
       setTimeout(() => {
         setToasts(prev => prev.filter(t => t.id !== id))
@@ -68,26 +66,15 @@ function ToastContainer({ toasts, onRemove }: { toasts: Toast[]; onRemove: (id: 
 
   return (
     <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
-      <AnimatePresence>
-        {toasts.map(toast => (
-          <motion.div
-            key={toast.id}
-            initial={{ opacity: 0, x: 100, scale: 0.9 }}
-            animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 100, scale: 0.9 }}
-            className={`flex items-start gap-3 p-4 rounded-lg border ${backgrounds[toast.type]} backdrop-blur-sm shadow-lg`}
-          >
-            {icons[toast.type]}
-            <p className="flex-1 text-sm text-openclaw-text">{toast.message}</p>
-            <button
-              onClick={() => onRemove(toast.id)}
-              className="text-openclaw-textMuted hover:text-openclaw-text"
-            >
-              <X className="w-4 h-4" />
-            </button>
-          </motion.div>
-        ))}
-      </AnimatePresence>
+      {toasts.map(toast => (
+        <div key={toast.id} className={`flex items-start gap-3 p-4 rounded-lg border ${backgrounds[toast.type]} backdrop-blur-sm shadow-lg transition-all`}>
+          {icons[toast.type]}
+          <p className="flex-1 text-sm text-openclaw-text">{toast.message}</p>
+          <button onClick={() => onRemove(toast.id)} className="text-openclaw-textMuted hover:text-openclaw-text">
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+      ))}
     </div>
   )
 }
