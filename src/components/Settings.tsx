@@ -14,6 +14,7 @@ import {
   ExternalLink
 } from 'lucide-react'
 import { useToast } from '../hooks/useToast'
+import { initOpenClaw, getOpenClawConfig } from '../lib/openclaw'
 
 interface SettingsProps {
   isOpen: boolean
@@ -36,9 +37,11 @@ interface AppSettings {
   refreshInterval: number
 }
 
+const gatewayConfig = getOpenClawConfig()
+
 const defaultSettings: AppSettings = {
   theme: 'dark',
-  openclawUrl: 'http://localhost:3456',
+  openclawUrl: gatewayConfig.gatewayUrl || 'http://localhost:3456',
   supabaseUrl: 'https://sb-publishable-i-7uiojc0ratsj5qqsvmjg-jmff-okp.supabase.co',
   supabaseKey: '',
   notifications: { agentStart: true, agentComplete: true, errors: true },
@@ -68,11 +71,15 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
+    initOpenClaw({ gatewayUrl: settings.openclawUrl })
+    document.documentElement.dataset.theme = settings.theme
   }, [settings])
 
   const handleSave = () => {
+    initOpenClaw({ gatewayUrl: settings.openclawUrl })
+    document.documentElement.dataset.theme = settings.theme
     setSaved(true)
-    addToast('success', 'Configurações salvas com sucesso!')
+    addToast('success', 'Configurações salvas e aplicadas com sucesso!')
     setTimeout(() => setSaved(false), 2000)
   }
 

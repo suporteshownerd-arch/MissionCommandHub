@@ -36,6 +36,10 @@ export function initOpenClaw(newConfig: Partial<OpenClawConfig>) {
   config = { ...config, ...newConfig }
 }
 
+export function getOpenClawConfig(): OpenClawConfig {
+  return config
+}
+
 // Verificar status da conexão
 export async function checkConnection(): Promise<boolean> {
   try {
