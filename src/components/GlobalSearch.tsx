@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
-import { motion } from 'framer-motion'
 import { Search, Command, Bot, Layers3, LayoutDashboard, Globe, Activity, Settings } from 'lucide-react'
 
 interface SearchResult {
@@ -45,27 +44,21 @@ export default function GlobalSearch({ onClose }: GlobalSearchProps) {
 
   const results = useMemo<SearchResult[]>(() => {
     if (!query.trim()) return []
-
     const q = query.toLowerCase()
     const searchInItems = (
       items: { id: string; label: string; description?: string; icon?: React.ElementType }[],
       type: SearchResult['type'],
       fallbackIcon: React.ElementType
-    ) => items
-      .filter(item => item.label.toLowerCase().includes(q) || item.description?.toLowerCase().includes(q))
-      .map(item => ({
-        id: `${type}-${item.id}`,
-        type,
-        label: item.label,
-        description: item.description,
-        icon: item.icon || fallbackIcon,
-        action: () => onClose()
-      }))
+    ) => items.filter(item => item.label.toLowerCase().includes(q) || item.description?.toLowerCase().includes(q)).map(item => ({
+      id: `${type}-${item.id}`,
+      type,
+      label: item.label,
+      description: item.description,
+      icon: item.icon || fallbackIcon,
+      action: () => onClose()
+    }))
 
-    return [
-      ...searchInItems(views, 'view', LayoutDashboard),
-      ...searchInItems(skills, 'skill', Layers3),
-    ].slice(0, 8)
+    return [...searchInItems(views, 'view', LayoutDashboard), ...searchInItems(skills, 'skill', Layers3)].slice(0, 8)
   }, [query, onClose])
 
   useEffect(() => {
@@ -88,20 +81,8 @@ export default function GlobalSearch({ onClose }: GlobalSearchProps) {
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-black/60 backdrop-blur-sm"
-      onClick={onClose}
-    >
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: -20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: -20 }}
-        onClick={e => e.stopPropagation()}
-        className="w-full max-w-xl glass rounded-xl border overflow-hidden shadow-2xl"
-      >
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-[15vh] bg-black/60 backdrop-blur-sm" onClick={onClose}>
+      <div className="w-full max-w-xl glass rounded-xl border overflow-hidden shadow-2xl transition-all duration-150" onClick={e => e.stopPropagation()}>
         <div className="flex items-center gap-3 p-4 border-b border-openclaw-border">
           <Search className="w-5 h-5 text-openclaw-textMuted" />
           <input
@@ -118,14 +99,9 @@ export default function GlobalSearch({ onClose }: GlobalSearchProps) {
 
         <div className="max-h-80 overflow-y-auto">
           {query.trim().length === 0 ? (
-            <div className="p-4 text-center text-openclaw-textMuted text-sm">
-              <p>Comece a digitar para buscar...</p>
-            </div>
+            <div className="p-4 text-center text-openclaw-textMuted text-sm"><p>Comece a digitar para buscar...</p></div>
           ) : results.length === 0 ? (
-            <div className="p-8 text-center text-openclaw-textMuted">
-              <Search className="w-8 h-8 mx-auto mb-2 opacity-30" />
-              <p>Nenhum resultado encontrado</p>
-            </div>
+            <div className="p-8 text-center text-openclaw-textMuted"><Search className="w-8 h-8 mx-auto mb-2 opacity-30" /><p>Nenhum resultado encontrado</p></div>
           ) : (
             <div className="p-2">
               {results.map((result, index) => (
@@ -145,7 +121,7 @@ export default function GlobalSearch({ onClose }: GlobalSearchProps) {
             </div>
           )}
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   )
 }
