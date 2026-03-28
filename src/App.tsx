@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, lazy, Suspense } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   PanelRightClose,
@@ -9,19 +9,31 @@ import {
 import Sidebar from './components/Sidebar'
 import Dashboard from './components/Dashboard'
 import AgentPanel from './components/AgentPanel'
-import MCPPanel from './components/MCPPanel'
 import ActivityFeed from './components/ActivityFeed'
-import IntegrationCards from './components/IntegrationCards'
 import SupabaseStatus from './components/SupabaseStatus'
-import FrameworkOverview from './components/FrameworkOverview'
-import KanbanView from './components/KanbanView'
-import SettingsView from './components/Settings'
-import MonitorView from './components/MonitorView'
-import GlobalSearch from './components/GlobalSearch'
 import { ToastProvider } from './hooks/useToast'
 import { useKeyboardShortcuts, KeyboardShortcutsHelp } from './hooks/useKeyboardShortcuts'
 
+const MCPPanel = lazy(() => import('./components/MCPPanel'))
+const IntegrationCards = lazy(() => import('./components/IntegrationCards'))
+const FrameworkOverview = lazy(() => import('./components/FrameworkOverview'))
+const KanbanView = lazy(() => import('./components/KanbanView'))
+const SettingsView = lazy(() => import('./components/Settings'))
+const MonitorView = lazy(() => import('./components/MonitorView'))
+const GlobalSearch = lazy(() => import('./components/GlobalSearch'))
+
 type View = 'dashboard' | 'agents' | 'mcp' | 'kanban' | 'integrations' | 'monitor' | 'framework' | 'settings'
+
+function LoadingView() {
+  return (
+    <div className="h-full flex items-center justify-center">
+      <div className="text-center">
+        <div className="w-8 h-8 border-2 border-openclaw-primary/30 border-t-openclaw-primary rounded-full animate-spin mx-auto mb-3" />
+        <p className="text-sm text-openclaw-textMuted">Carregando...</p>
+      </div>
+    </div>
+  )
+}
 
 function AppContent() {
   const [currentView, setCurrentView] = useState<View>('dashboard')
@@ -46,7 +58,6 @@ function AppContent() {
 
   useKeyboardShortcuts({ shortcuts })
 
-  // Listen for Ctrl+K
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
@@ -60,22 +71,38 @@ function AppContent() {
 
   const renderContent = () => {
     switch (currentView) {
-      case 'dashboard': return <Dashboard />
-      case 'agents': return <AgentPanel />
-      case 'mcp': return <MCPPanel />
-      case 'kanban': return <KanbanView />
-      case 'integrations': return <IntegrationCards />
-      case 'monitor': return <MonitorView />
-      case 'framework': return <FrameworkOverview />
-      case 'settings': return <div className="h-full flex items-center justify-center text-openclaw-textMuted"><div className="text-center"><Settings className="w-12 h-12 mx-auto mb-4 opacity-30" /><p>Use o botão de configurações na sidebar</p></div></div>
-      default: return <Dashboard />
+      case 'dashboard':
+        return <Dashboard />
+      case 'agents':
+        return <AgentPanel />
+      case 'mcp':
+        return <MCPPanel />
+      case 'kanban':
+        return <KanbanView />
+      case 'integrations':
+        return <IntegrationCards />
+      case 'monitor':
+        return <MonitorView />
+      case 'framework':
+        return <FrameworkOverview />
+      case 'settings':
+        return (
+          <div className="h-full flex items-center justify-center text-openclaw-textMuted">
+            <div className="text-center">
+              <Settings className="w-12 h-12 mx-auto mb-4 opacity-30" />
+              <p>Use o botão de configurações na sidebar</p>
+            </div>
+          </div>
+        )
+      default:
+        return <Dashboard />
     }
   }
 
   return (
     <div className="flex h-screen bg-openclaw-bg overflow-hidden">
-      <Sidebar 
-        collapsed={sidebarCollapsed} 
+      <Sidebar
+        collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
         currentView={currentView}
         onViewChange={(view) => {
@@ -99,6 +126,12 @@ function AppContent() {
             <SupabaseStatus />
           </div>
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSearchOpen(true)}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-openclaw-bg border border-openclaw-border text-openclaw-textMuted hover:text-openclaw-text transition-colors"
+            >
+              <span className="text-xs">Ctrl+K</span>
+            </button>
             <button onClick={() => setSettingsOpen(true)} className="p-2 rounded-lg hover:bg-openclaw-cardHover text-openclaw-textMuted hover:text-openclaw-text transition-colors">
               <Settings className="w-5 h-5" />
             </button>
@@ -117,7 +150,9 @@ function AppContent() {
                 transition={{ duration: 0.15 }}
                 className="flex-1 overflow-hidden"
               >
-                {renderContent()}
+                <Suspense fallback={<LoadingView />}>
+                  {renderContent()}
+                </Suspense>
               </motion.div>
             </AnimatePresence>
           </motion.div>
@@ -145,8 +180,10 @@ function AppContent() {
         </div>
       </div>
 
-      <SettingsView isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
-      {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
+      <Suspense fallback={null}>
+        <SettingsView isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+        {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
+      </Suspense>
       <KeyboardShortcutsHelp shortcuts={shortcuts} />
     </div>
   )
