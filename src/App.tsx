@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   PanelRightClose,
@@ -17,6 +17,7 @@ import FrameworkOverview from './components/FrameworkOverview'
 import KanbanView from './components/KanbanView'
 import SettingsView from './components/Settings'
 import MonitorView from './components/MonitorView'
+import GlobalSearch from './components/GlobalSearch'
 import { ToastProvider } from './hooks/useToast'
 import { useKeyboardShortcuts, KeyboardShortcutsHelp } from './hooks/useKeyboardShortcuts'
 
@@ -27,6 +28,7 @@ function AppContent() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [activityCollapsed, setActivityCollapsed] = useState(false)
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const [searchOpen, setSearchOpen] = useState(false)
 
   const shortcuts = [
     { key: '1', description: 'Dashboard', action: () => setCurrentView('dashboard') },
@@ -37,11 +39,24 @@ function AppContent() {
     { key: '6', description: 'Monitor', action: () => setCurrentView('monitor') },
     { key: '7', description: 'Framework', action: () => setCurrentView('framework') },
     { key: ',', ctrl: true, description: 'Configurações', action: () => setSettingsOpen(true) },
+    { key: 'k', ctrl: true, description: 'Busca Global', action: () => setSearchOpen(true) },
     { key: 'b', ctrl: true, description: 'Toggle Sidebar', action: () => setSidebarCollapsed(p => !p) },
     { key: 'j', ctrl: true, description: 'Toggle Activity', action: () => setActivityCollapsed(p => !p) },
   ]
 
   useKeyboardShortcuts({ shortcuts })
+
+  // Listen for Ctrl+K
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+        e.preventDefault()
+        setSearchOpen(true)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
 
   const renderContent = () => {
     switch (currentView) {
@@ -131,6 +146,7 @@ function AppContent() {
       </div>
 
       <SettingsView isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
       <KeyboardShortcutsHelp shortcuts={shortcuts} />
     </div>
   )
