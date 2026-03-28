@@ -1,8 +1,6 @@
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import { Activity, Bot, Zap, Clock, CheckCircle, ArrowRight, X } from 'lucide-react'
 
-// Sample activity data
 const sampleActivities = [
   { id: '1', type: 'agent', message: 'Research Agent executou tarefa de pesquisa', time: '2 min atrás', icon: Bot, color: 'text-openclaw-primary', bg: 'bg-openclaw-primary/10' },
   { id: '2', type: 'task', message: 'Tarefa movida para "Em Progresso"', time: '5 min atrás', icon: ArrowRight, color: 'text-openclaw-warning', bg: 'bg-openclaw-warning/10' },
@@ -23,7 +21,6 @@ export default function ActivityFeed({ onClose, collapsed }: ActivityFeedProps) 
 
   return (
     <div className="h-full flex flex-col bg-openclaw-card border-l border-openclaw-border">
-      {/* Header */}
       <div className="p-4 border-b border-openclaw-border flex items-center justify-between">
         <h3 className="font-semibold text-openclaw-text flex items-center gap-2">
           <Activity className="w-5 h-5 text-openclaw-primary" />
@@ -42,14 +39,10 @@ export default function ActivityFeed({ onClose, collapsed }: ActivityFeedProps) 
         </div>
       </div>
 
-      {/* Activity List */}
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
-        {activities.map((activity, index) => (
-          <motion.div
+        {activities.map((activity) => (
+          <div
             key={activity.id}
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: index * 0.05 }}
             className="p-3 rounded-lg bg-openclaw-bg border border-openclaw-border hover:border-openclaw-primary/30 hover:shadow-sm transition-all cursor-pointer group"
           >
             <div className="flex items-start gap-3">
@@ -64,11 +57,10 @@ export default function ActivityFeed({ onClose, collapsed }: ActivityFeedProps) 
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      {/* Footer */}
       <div className="p-3 border-t border-openclaw-border">
         <button className="w-full py-2 text-sm text-openclaw-textMuted hover:text-openclaw-primary transition-colors text-center">
           Ver todo o histórico →
