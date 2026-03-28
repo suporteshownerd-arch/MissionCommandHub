@@ -1,5 +1,4 @@
 import { useState, useEffect, lazy, Suspense } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import {
   PanelRightClose,
   PanelRightOpen,
@@ -140,36 +139,19 @@ function AppContent() {
         </div>
 
         <div className="flex-1 flex overflow-hidden relative">
-          <motion.div layout className="flex-1 flex flex-col overflow-hidden p-4">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentView}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.15 }}
-                className="flex-1 overflow-hidden"
-              >
-                <Suspense fallback={<LoadingView />}>
-                  {renderContent()}
-                </Suspense>
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
+          <div className="flex-1 flex flex-col overflow-hidden p-4 transition-all duration-150 ease-out">
+            <div className="flex-1 overflow-hidden animate-in fade-in duration-200">
+              <Suspense fallback={<LoadingView />}>
+                {renderContent()}
+              </Suspense>
+            </div>
+          </div>
 
-          <AnimatePresence>
-            {!activityCollapsed && (
-              <motion.div
-                initial={{ width: 0, opacity: 0 }}
-                animate={{ width: 320, opacity: 1 }}
-                exit={{ width: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="border-l border-openclaw-border flex flex-col overflow-hidden bg-openclaw-card/30"
-              >
-                <ActivityFeed />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {!activityCollapsed && (
+            <div className="border-l border-openclaw-border flex flex-col overflow-hidden bg-openclaw-card/30 w-80 transition-all duration-200 ease-out">
+              <ActivityFeed />
+            </div>
+          )}
 
           <button
             onClick={() => setActivityCollapsed(!activityCollapsed)}
