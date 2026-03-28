@@ -1,13 +1,10 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Bot,
-  Activity,
-  Cpu,
-  Workflow,
   PanelRightClose,
   PanelRightOpen,
-  Zap
+  Zap,
+  Settings
 } from 'lucide-react'
 import Sidebar from './components/Sidebar'
 import Dashboard from './components/Dashboard'
@@ -17,13 +14,17 @@ import ActivityFeed from './components/ActivityFeed'
 import IntegrationCards from './components/IntegrationCards'
 import SupabaseStatus from './components/SupabaseStatus'
 import FrameworkOverview from './components/FrameworkOverview'
+import KanbanView from './components/KanbanView'
+import SettingsView from './components/Settings'
+import MonitorView from './components/MonitorView'
 
-type View = 'dashboard' | 'agents' | 'mcp' | 'kanban' | 'integrations' | 'monitor' | 'framework'
+type View = 'dashboard' | 'agents' | 'mcp' | 'kanban' | 'integrations' | 'monitor' | 'framework' | 'settings'
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [activityCollapsed, setActivityCollapsed] = useState(false)
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   const renderContent = () => {
     switch (currentView) {
@@ -41,6 +42,13 @@ function App() {
         return <MonitorView />
       case 'framework':
         return <FrameworkOverview />
+      case 'settings':
+        return <div className="h-full flex items-center justify-center text-openclaw-textMuted">
+          <div className="text-center">
+            <Settings className="w-12 h-12 mx-auto mb-4 opacity-30" />
+            <p>Use o botão de configurações na sidebar</p>
+          </div>
+        </div>
       default:
         return <Dashboard />
     }
@@ -53,7 +61,13 @@ function App() {
         collapsed={sidebarCollapsed} 
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
         currentView={currentView}
-        onViewChange={(view) => setCurrentView(view)}
+        onViewChange={(view) => {
+          if (view === 'settings') {
+            setSettingsOpen(true)
+          } else {
+            setCurrentView(view)
+          }
+        }}
       />
 
       {/* Main Content */}
@@ -82,6 +96,12 @@ function App() {
           
           {/* Right side */}
           <div className="flex items-center gap-4">
+            <button
+              onClick={() => setSettingsOpen(true)}
+              className="p-2 rounded-lg hover:bg-openclaw-cardHover text-openclaw-textMuted hover:text-openclaw-text transition-colors"
+            >
+              <Settings className="w-5 h-5" />
+            </button>
             <span className="text-xs text-openclaw-textMuted font-mono">{new Date().toLocaleTimeString('pt-BR')}</span>
           </div>
         </div>
@@ -131,123 +151,9 @@ function App() {
           </button>
         </div>
       </div>
-    </div>
-  )
-}
 
-function KanbanView() {
-  const columns = [
-    { name: 'Backlog', color: 'bg-openclaw-textMuted' },
-    { name: 'In Progress', color: 'bg-openclaw-primary' },
-    { name: 'Review', color: 'bg-openclaw-warning' },
-    { name: 'Done', color: 'bg-openclaw-success' }
-  ]
-  
-  const tasks = [
-    { title: 'Implementar autenticação OAuth2', column: 'Backlog' },
-    { title: 'Revisar PR #42', column: 'Review' },
-    { title: 'Deploy staging', column: 'In Progress' },
-    { title: 'Atualizar documentação', column: 'Done' },
-    { title: 'Criar testes unitários', column: 'Backlog' },
-  ]
-  
-  return (
-    <div className="h-full flex gap-4 overflow-x-auto pb-4">
-      {columns.map((column) => (
-        <div 
-          key={column.name}
-          className="flex-shrink-0 w-72 glass rounded-xl border flex flex-col"
-        >
-          <div className="p-4 border-b border-openclaw-border">
-            <h3 className="font-semibold text-openclaw-text flex items-center gap-2">
-              <div className={`w-2 h-2 rounded-full ${column.color}`} />
-              {column.name}
-            </h3>
-            <span className="text-xs text-openclaw-textMuted mt-1 block">
-              {tasks.filter(t => t.column === column.name).length} tarefas
-            </span>
-          </div>
-          <div className="p-3 flex-1 overflow-y-auto space-y-3">
-            {tasks.filter(t => t.column === column.name).map((task, i) => (
-              <div 
-                key={i}
-                className="bg-openclaw-bgHover rounded-lg p-3 border border-openclaw-border hover:border-openclaw-primary/30 hover:shadow-lg hover:shadow-openclaw-primary/5 transition-all cursor-pointer group"
-              >
-                <p className="text-sm text-openclaw-text group-hover:text-openclaw-primary transition-colors">{task.title}</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <Activity className="w-3 h-3 text-openclaw-textMuted" />
-                  <span className="text-xs text-openclaw-textMuted">Hoje</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function MonitorView() {
-  const stats = [
-    { label: 'Active Agents', value: '3', icon: Bot, color: 'text-openclaw-primary', bg: 'bg-openclaw-primary/10' },
-    { label: 'Tasks Today', value: '12', icon: Workflow, color: 'text-openclaw-success', bg: 'bg-openclaw-success/10' },
-    { label: 'Uptime', value: '99.9%', icon: Activity, color: 'text-openclaw-warning', bg: 'bg-openclaw-warning/10' },
-    { label: 'API Calls', value: '1.2k', icon: Cpu, color: 'text-openclaw-accent', bg: 'bg-openclaw-accent/10' },
-  ]
-  
-  const agents = [
-    { name: 'Research Agent', status: 'running', tasks: 5 },
-    { name: 'Code Agent', status: 'running', tasks: 3 },
-    { name: 'Writer Agent', status: 'idle', tasks: 0 },
-  ]
-
-  return (
-    <div className="space-y-6">
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <motion.div
-            key={stat.label}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 100 }}
-            className="glass rounded-xl p-5 hover:border-openclaw-primary/30 transition-all cursor-pointer group"
-          >
-            <div className={`w-12 h-12 rounded-lg ${stat.bg} flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-              <stat.icon className={`w-6 h-6 ${stat.color}`} />
-            </div>
-            <p className="text-3xl font-bold text-openclaw-text">{stat.value}</p>
-            <p className="text-sm text-openclaw-textMuted">{stat.label}</p>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Agent Status */}
-      <div className="glass rounded-xl p-5 border">
-        <h3 className="text-lg font-semibold text-openclaw-text mb-4 flex items-center gap-2">
-          <Zap className="w-5 h-5 text-openclaw-primary" />
-          Status dos Agentes
-        </h3>
-        <div className="space-y-3">
-          {agents.map((agent) => (
-            <div 
-              key={agent.name}
-              className="flex items-center justify-between p-3 rounded-lg bg-openclaw-bg border border-openclaw-border hover:border-openclaw-primary/30 transition-colors"
-            >
-              <div className="flex items-center gap-3">
-                <div className={`w-2.5 h-2.5 rounded-full ${agent.status === 'running' ? 'bg-openclaw-success animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]' : 'bg-openclaw-textMuted'}`} />
-                <span className="font-medium text-openclaw-text">{agent.name}</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-openclaw-textMuted">{agent.tasks} tarefas</span>
-                <button className="p-1.5 rounded hover:bg-openclaw-cardHover text-openclaw-textMuted hover:text-openclaw-text transition-colors">
-                  {agent.status === 'running' ? <Activity className="w-4 h-4 text-openclaw-success" /> : <Bot className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      {/* Settings Modal */}
+      <SettingsView isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   )
 }

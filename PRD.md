@@ -1,182 +1,159 @@
-# Mission Command Hub - PRD de Melhorias
-
-## Visão Geral
-Aplicativo React para controle e gerenciamento de agentes de IA com integração Supabase e OpenClaw.
+# PRD - Mission Command Hub
+## Plano de Melhorias Contínuas
 
 ---
 
-## 1. Melhorias de Layout
+## 1. Visão Geral
 
-### 1.1 Sidebar
-- [x] Logo com gradiente e efeito glow
-- [x] Chat integrado com input e mensagens
-- [x] Navegação colapsável
-- [x] Itens com highlight em primary color
-- [ ] Adicionar avatares dos agentes
-- [ ] Indicador de status online
+**Projeto:** Mission Command Hub (OpenClaw Control UI)  
+**Stack:** React + Vite + TypeScript + TailwindCSS  
+**Versão atual:** 1.0.0
 
-### 1.2 Header
-- [x] Barra de status simples
-- [x] Status Supabase (indicador de conexão)
-- [ ] Notifications dropdown
-- [ ] User menu dropdown
-- [ ] Busca global (Cmd+K)
-
-### 1.3 Painel de Agentes
-- [x] Cards com emojis e status
-- [x] Detail view com capacidades
-- [x] Atividade recente
-- [ ] Histórico de tarefas
-- [ ] Logs em tempo real
-
-### 1.4 Activity Feed
-- [x] Lista de atividades
-- [x] Ícones por tipo
-- [ ] Filtros por tipo
-- [ ] Busca por data
-
-### 1.5 Integrações
-- [x] Cards com status
-- [x] Validação visual
-- [ ] Config inline
-- [ ] Logs de conexão
+### Objetivos
+- Interface unificada para controle de agentes IA
+- Integração com OpenClaw Gateway e MCP
+- Framework de skills estruturado
 
 ---
 
-## 2. Funcionalidades
+## 2. Análise do Estado Atual
 
-### 2.1 Autenticação Supabase
-- [ ] Login/Logout
-- [ ] Session management
-- [ ] Protected routes
+### ✅ Pontos Fortes
+- UI moderna com dark theme e animações
+- Sidebar expansível com chat integrado
+- Framework de skills documentado
+- Componentes bem estruturados
 
-### 2.2 Banco de Dados Supabase
-- [x] Cliente configurado
-- [x] Schema SQL pronto
-- [x] Tipos TypeScript definidos
-- [ ] Hooks React para CRUD
+### ⚠️ Áreas de Melhoria
 
-### 2.3 Integração OpenClaw
-- [x] Cliente Gateway
-- [x] Listar agentes
-- [x] Executar comandos
-- [ ] Receber eventos realtime
-
-### 2.4 Chat Agent
-- [x] Interface de chat na sidebar
-- [ ] Histórico de conversas (banco)
-- [ ] Integração com LLM
-- [ ] Context awareness
-
-### 2.5 Kanban
-- [x] Colunas: Backlog, In Progress, Review, Done
-- [ ] Drag & drop
-- [ ] Criar/editar tarefas
-- [ ] Assign to agent
-
-### 2.6 Monitor
-- [x] Stats em tempo real
-- [x] Status dos agentes
-- [x] Controle Start/Stop (UI)
-- [ ] Logs de execução
+| Área | Problema | Prioridade |
+|------|----------|------------|
+| **FrameworkOverview** | Dados estáticos hardcoded | Alta |
+| **Chat Agent** | Mock apenas (sem integração real) | Alta |
+| **MCP Panel** | Dados mockados, sem API real | Alta |
+| **Settings** | Botão sem funcionalidade | Média |
+| **TypeScript** | Algunos tipos `any` | Média |
+| **Performance** | Bundle 512KB (sem code-splitting) | Baixa |
+| **Kanban/Monitor** | Views placeholder | Baixa |
 
 ---
 
-## 3. Integrações Externas
+## 3. Roadmap de Melhorias
 
-### 3.1 Supabase
-- [x] Cliente JS configurado
-- [x] Schema de banco pronto
-- [ ] Auth de usuários
-- [ ] Realtime subscriptions
+### Fase 1: Funcionalidades Core (Próxima sprint)
 
-### 3.2 OpenClaw
-- [x] Gateway API client
-- [x] Agent management
-- [x] Command execution
+#### 3.1 Dashboard com dados reais
+- [ ] Conectar Dashboard ao OpenClaw Gateway
+- [ ] Mostrar status real dos agentes
+- [ ] Exibir uptime real da API
 
-### 3.3 OpenAI/Anthropic
-- [ ] Chat responses
-- [ ] Agent prompts
+#### 3.2 Framework dinâmico
+- [ ] Ler arquivos do `Skills/official/` via API
+- [ ] Exibir skills carregadas dinamicamente
+- [ ] Mostrar Quick Routing interativo
 
----
+#### 3.3 Chat Agent funcional
+- [ ] Conectar ao endpoint do OpenClaw
+- [ ] Suporte a streaming de respostas
+- [ ] Histórico persistido localStorage
 
-## 4. Stack Técnica
+### Fase 2: Integração (Próximas 2 sprints)
 
-- [x] React 18 + TypeScript
-- [x] Vite + Tailwind CSS
-- [x] Supabase JS Client
-- [x] Framer Motion (animações)
-- [x] Lucide React (ícones)
-- [ ] React Query (data fetching)
+#### 3.4 MCP real
+- [ ] Integrar com `/api/mcp/tools`
+- [ ] Integrar com `/api/mcp/agents`
+- [ ] Execução real de ferramentas
 
----
+#### 3.5 Settings completo
+- [ ] Configurações de tema
+- [ ] Configurações de API
+- [ ] Preferências do usuário
 
-## 5. Prioridades
+### Fase 3: Otimização
 
-### P0 (Crítico) ✅
-1. [x] Setup Supabase client
-2. [x] Database schema
-3. [ ] Auth básico
-
-### P1 (Alta)
-1. [x] Listar agentes (dados mock)
-2. [ ] Criar/editar agentes
-3. [ ] Activity feed do banco
-
-### P2 (Média)
-1. [x] Integração OpenClaw (client)
-2. [x] Chat com respostas simuladas
-3. [ ] Kanban funcional
-
-### P3 (Baixa)
-1. [ ] Notifications
-2. [ ] Busca global
-3. [ ] Relatórios
+#### 3.6 Performance
+- [ ] Lazy loading de rotas
+- [ ] Code splitting
+- [ ] Otimização de bundle
 
 ---
 
-## 6. Arquivos do Projeto
+## 4. Implementações Concluídas (v1.1)
+
+### ✅ Fase 1 - Concluído
+- [x] API Client (`src/api/openclaw.ts`)
+- [x] Hooks: `useOpenClaw`, `useSkills`, `useChat`
+- [x] FrameworkOverview dinâmico com 14 skills
+- [x] Chat com localStorage e streaming simulation
+- [x] Dashboard com dados reais do Gateway
+
+### ✅ Fase 2 - Concluído
+- [x] Settings completo (modal com abas)
+- [x] Kanban interativo (CRUD completo)
+- [x] Monitor melhorado com dados reais
+- [x] Sidebar melhorada
+
+---
+
+## 5. Especificação Técnica
+
+### 5.1 Estrutura de arquivos atual
 
 ```
-mission-command-hub-openclaw/
-├── src/
-│   ├── components/
-│   │   ├── ActivityFeed.tsx
-│   │   ├── AgentPanel.tsx
-│   │   ├── IntegrationCards.tsx
-│   │   ├── Sidebar.tsx
-│   │   └── SupabaseStatus.tsx
-│   ├── hooks/
-│   │   └── useSupabase.ts
-│   ├── lib/
-│   │   ├── openclaw.ts
-│   │   └── supabase.ts
-│   ├── App.tsx
-│   ├── index.css
-│   └── main.tsx
-├── supabase-schema.sql
-├── PRD.md
-└── README.md
+src/
+├── api/
+│   └── openclaw.ts      # Client API ✓
+├── components/
+│   ├── Settings.tsx    # Modal de configurações ✓
+│   ├── KanbanView.tsx   # Task board ✓
+│   ├── MonitorView.tsx  # Monitor ✓
+│   └── FrameworkOverview.tsx # Skills dinâmicas ✓
+├── hooks/
+│   ├── useOpenClaw.ts  ✓
+│   ├── useSkills.ts    ✓
+│   └── useChat.ts      ✓
+└── App.tsx              # Organizado
+```
+
+### 5.2 Endpoints suportados
+
+```typescript
+// OpenClaw Gateway
+GET  /health            → Connection check
+GET  /api/status        → System status
+GET  /api/agents        → Agent[]
+POST /api/agents/:id/execute
+POST /api/chat          → Chat response
 ```
 
 ---
 
-## 7. Como Executar
+## 6. Próximas Melhorias (Backlog)
 
-```bash
-# Instalar dependências
-npm install
+### Alta Prioridade
+- [ ] Integração MCP real com ferramentas
+- [ ] Theme light mode
+- [ ] Notificações toast
 
-# Rodar em desenvolvimento
-npm run dev
-```
+### Média Prioridade
+- [ ] Code splitting / lazy loading
+- [ ] Testes unitários
+- [ ] Keyboard shortcuts
 
-Acesse: http://localhost:5179
+### Baixa Prioridade
+- [ ] PWA support
+- [ ] Analytics
+- [ ] Temas customizáveis
 
-### Setup Supabase
+---
 
-1. Crie projeto em https://supabase.com
-2. Copie o conteúdo de `supabase-schema.sql`
-3. Execute no SQL Editor do Supabase
-4. Configure as credenciais em `src/lib/supabase.ts`
+## 7. Métricas de Sucesso
+
+- [ ] Build < 300KB (gzipped)
+- [ ] Lighthouse Performance > 80
+- [ ] Tempo de resposta API < 500ms
+- [ ] Cobertura de testes > 60%
+
+---
+
+*Documento vivo - atualizar conforme evolução*
