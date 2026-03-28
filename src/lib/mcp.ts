@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { supabase } from './supabase'
 import { openclawApi } from '../api/openclaw'
+import { executeCommand } from './openclaw'
 
 export interface MCPTool {
   id: string
@@ -88,8 +89,13 @@ export function useMCP() {
     addLog(`🤖 ${agent.name}: Executando "${command}"...`)
 
     try {
-      const response = await openclawApi.sendChatMessage(`${agent.name}: ${command}`)
-      addLog(`✅ ${agent.name}: ${response.response || 'Concluído'}`)
+      const result = await executeCommand(agentId, command)
+      if (result.success) {
+        addLog(`✅ ${agent.name}: ${result.output || 'Concluído'}`)
+      } else {
+        const response = await openclawApi.sendChatMessage(`${agent.name}: ${command}`)
+        addLog(`✅ ${agent.name}: ${response.response || 'Concluído'}`)
+      }
     } catch {
       await new Promise(resolve => setTimeout(resolve, 1200))
       addLog(`✅ ${agent.name}: Concluído (fallback)`)
