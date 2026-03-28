@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
 import { openclawApi } from '../api/openclaw'
+import { useToast } from './useToast'
 
 export interface ChatMessage {
   id: string
@@ -39,6 +40,7 @@ export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>(() => loadFromStorage())
   const [loading, setLoading] = useState(false)
   const [connected, setConnected] = useState(false)
+  const { addToast } = useToast()
 
   // Check connection on mount
   useEffect(() => {
@@ -76,6 +78,7 @@ export function useChat() {
 
       setMessages(prev => [...prev, assistantMessage])
     } catch (error) {
+      addToast('error', 'Erro ao conectar com o Gateway')
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',

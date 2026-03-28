@@ -14,6 +14,7 @@ import {
   AlertCircle,
   ExternalLink
 } from 'lucide-react'
+import { useToast } from '../hooks/useToast'
 
 interface SettingsProps {
   isOpen: boolean
@@ -70,6 +71,7 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
   const [saved, setSaved] = useState(false)
   const [testingApi, setTestingApi] = useState(false)
   const [apiStatus, setApiStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const { addToast } = useToast()
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings))
@@ -77,6 +79,7 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
 
   const handleSave = () => {
     setSaved(true)
+    addToast('success', 'Configurações salvas com sucesso!')
     setTimeout(() => setSaved(false), 2000)
   }
 
@@ -92,6 +95,7 @@ export default function Settings({ isOpen, onClose }: SettingsProps) {
       setApiStatus(res.ok ? 'success' : 'error')
     } catch {
       setApiStatus('error')
+      addToast('error', 'Falha ao conectar no Gateway')
     } finally {
       setTestingApi(false)
     }
