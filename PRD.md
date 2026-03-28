@@ -7,153 +7,187 @@
 
 **Projeto:** Mission Command Hub (OpenClaw Control UI)  
 **Stack:** React + Vite + TypeScript + TailwindCSS  
-**Versão atual:** 1.0.0
+**Versão atual:** 1.2+  
+**Status:** Melhorias contínuas implementadas e consolidadas
 
 ### Objetivos
 - Interface unificada para controle de agentes IA
 - Integração com OpenClaw Gateway e MCP
 - Framework de skills estruturado
+- Performance otimizada para carregamento inicial
 
 ---
 
-## 2. Análise do Estado Atual
+## 2. Estado Atual Consolidado
 
-### ✅ Pontos Fortes
-- UI moderna com dark theme e animações
-- Sidebar expansível com chat integrado
-- Framework de skills documentado
-- Componentes bem estruturados
+### ✅ Entregas principais concluídas
+- Dashboard conectado com dados reais
+- FrameworkOverview dinâmico
+- Chat com persistência local
+- Settings completo
+- Kanban funcional
+- Monitor funcional
+- Sidebar aprimorada
+- Global Search (`Ctrl+K`)
+- Toast notifications
+- Keyboard shortcuts
+- Code splitting + lazy loading
+- Vendor chunking otimizado
+- Remoção completa de `framer-motion`
 
-### ⚠️ Áreas de Melhoria
+### ✅ Situação atual do bundle
 
-| Área | Problema | Prioridade |
-|------|----------|------------|
-| **FrameworkOverview** | Dados estáticos hardcoded | Alta |
-| **Chat Agent** | Mock apenas (sem integração real) | Alta |
-| **MCP Panel** | Dados mockados, sem API real | Alta |
-| **Settings** | Botão sem funcionalidade | Média |
-| **TypeScript** | Algunos tipos `any` | Média |
-| **Performance** | Bundle 512KB (sem code-splitting) | Baixa |
-| **Kanban/Monitor** | Views placeholder | Baixa |
+| Chunk | Tamanho | Gzip |
+|------|---------|------|
+| `index` | 46.24 kB | 11.77 kB |
+| `react-vendor` | 163.22 kB | 49.39 kB |
+| `supabase-vendor` | 187.42 kB | 49.41 kB |
+| `vendor` | 10.28 kB | 3.55 kB |
 
----
-
-## 3. Roadmap de Melhorias
-
-### Fase 1: Funcionalidades Core (Próxima sprint)
-
-#### 3.1 Dashboard com dados reais
-- [ ] Conectar Dashboard ao OpenClaw Gateway
-- [ ] Mostrar status real dos agentes
-- [ ] Exibir uptime real da API
-
-#### 3.2 Framework dinâmico
-- [ ] Ler arquivos do `Skills/official/` via API
-- [ ] Exibir skills carregadas dinamicamente
-- [ ] Mostrar Quick Routing interativo
-
-#### 3.3 Chat Agent funcional
-- [ ] Conectar ao endpoint do OpenClaw
-- [ ] Suporte a streaming de respostas
-- [ ] Histórico persistido localStorage
-
-### Fase 2: Integração (Próximas 2 sprints)
-
-#### 3.4 MCP real
-- [ ] Integrar com `/api/mcp/tools`
-- [ ] Integrar com `/api/mcp/agents`
-- [ ] Execução real de ferramentas
-
-#### 3.5 Settings completo
-- [ ] Configurações de tema
-- [ ] Configurações de API
-- [ ] Preferências do usuário
-
-### Fase 3: Otimização
-
-#### 3.6 Performance
-- [ ] Lazy loading de rotas
-- [ ] Code splitting
-- [ ] Otimização de bundle
+### Resultado de performance
+- `motion-vendor`: **eliminado**
+- `index` shell: **pequeno e estável**
+- views pesadas: **lazy loaded**
+- vendor genérico: **quase zerado**
 
 ---
 
-## 4. Implementações Concluídas (v1.1)
+## 3. Roadmap Executado
 
-### ✅ Fase 1 - Concluído
-- [x] API Client (`src/api/openclaw.ts`)
-- [x] Hooks: `useOpenClaw`, `useSkills`, `useChat`
-- [x] FrameworkOverview dinâmico com 14 skills
-- [x] Chat com localStorage e streaming simulation
-- [x] Dashboard com dados reais do Gateway
+### ✅ Fase 1: Funcionalidades Core
+- [x] Dashboard com dados reais
+- [x] Framework dinâmico
+- [x] Chat funcional com persistência
+- [x] API client para OpenClaw Gateway
+- [x] Hooks reutilizáveis
 
-### ✅ Fase 2 - Concluído
-- [x] Settings completo (modal com abas)
-- [x] Kanban interativo (CRUD completo)
-- [x] Monitor melhorado com dados reais
+### ✅ Fase 2: UX e Operação
+- [x] Settings completo
+- [x] Kanban interativo
+- [x] Monitor melhorado
 - [x] Sidebar melhorada
+- [x] Toast notifications
+- [x] Keyboard shortcuts
+- [x] Global Search
+
+### ✅ Fase 3: Performance
+- [x] Lazy loading de views
+- [x] Code splitting
+- [x] Manual chunks no Vite
+- [x] Separação de `react-vendor`
+- [x] Separação de `supabase-vendor`
+- [x] Remoção de `framer-motion`
+- [x] Simplificação de animações com CSS
 
 ---
 
-## 5. Especificação Técnica
+## 4. Arquitetura Atual
 
-### 5.1 Estrutura de arquivos atual
+### Estrutura principal
 
-```
+```txt
 src/
 ├── api/
-│   └── openclaw.ts      # Client API ✓
+│   └── openclaw.ts
 ├── components/
-│   ├── Settings.tsx    # Modal de configurações ✓
-│   ├── KanbanView.tsx   # Task board ✓
-│   ├── MonitorView.tsx  # Monitor ✓
-│   └── FrameworkOverview.tsx # Skills dinâmicas ✓
+│   ├── Settings.tsx
+│   ├── KanbanView.tsx
+│   ├── MonitorView.tsx
+│   ├── FrameworkOverview.tsx
+│   ├── GlobalSearch.tsx
+│   ├── Sidebar.tsx
+│   ├── Dashboard.tsx
+│   ├── AgentPanel.tsx
+│   └── MCPPanel.tsx
 ├── hooks/
-│   ├── useOpenClaw.ts  ✓
-│   ├── useSkills.ts    ✓
-│   └── useChat.ts      ✓
-└── App.tsx              # Organizado
+│   ├── useOpenClaw.ts
+│   ├── useSkills.ts
+│   ├── useChat.ts
+│   ├── useToast.tsx
+│   └── useKeyboardShortcuts.tsx
+└── App.tsx
 ```
 
-### 5.2 Endpoints suportados
+### Endpoints suportados
 
 ```typescript
-// OpenClaw Gateway
-GET  /health            → Connection check
-GET  /api/status        → System status
-GET  /api/agents        → Agent[]
+GET  /health
+GET  /api/status
+GET  /api/agents
 POST /api/agents/:id/execute
-POST /api/chat          → Chat response
+POST /api/chat
 ```
 
 ---
 
-## 6. Próximas Melhorias (Backlog)
+## 5. Melhorias Implementadas em UX
 
-### Alta Prioridade
-- [ ] Integração MCP real com ferramentas
-- [ ] Theme light mode
-- [ ] Notificações toast
+### Navegação
+- Sidebar colapsável
+- Busca global com `Ctrl+K`
+- Atalhos de teclado para views
+- Atalhos para abrir settings e painéis
 
-### Média Prioridade
-- [ ] Code splitting / lazy loading
+### Feedback visual
+- Toast notifications
+- Estados de loading
+- Status de conexão
+- Indicadores visuais para agentes e integrações
+
+### Persistência local
+- Histórico do chat
+- Configurações do usuário
+- Estado do Kanban
+
+---
+
+## 6. Backlog Atual Realista
+
+### Alta prioridade
+- [ ] Integração MCP real com backend de ferramentas
+- [ ] Theme light funcional
+- [ ] Melhorar navegação da Global Search para mudar views de fato
+
+### Média prioridade
 - [ ] Testes unitários
-- [ ] Keyboard shortcuts
+- [ ] Tipagem mais estrita (reduzir `any` restantes)
+- [ ] Melhorar estados vazios e erros
 
-### Baixa Prioridade
+### Baixa prioridade
 - [ ] PWA support
 - [ ] Analytics
 - [ ] Temas customizáveis
+- [ ] Telemetria de performance no cliente
 
 ---
 
 ## 7. Métricas de Sucesso
 
-- [ ] Build < 300KB (gzipped)
-- [ ] Lighthouse Performance > 80
-- [ ] Tempo de resposta API < 500ms
+### Métricas atingidas parcialmente
+- [x] Shell principal reduzido drasticamente
+- [x] Code splitting implementado
+- [x] Bundle inicial otimizado
+- [ ] Lighthouse Performance > 80 (não medido ainda)
+- [ ] Tempo de resposta API < 500ms (depende do backend)
 - [ ] Cobertura de testes > 60%
+
+### Benchmark interno desta rodada
+- Antes: bundle principal acima de **500 kB**
+- Depois: shell principal em **46.24 kB**
 
 ---
 
-*Documento vivo - atualizar conforme evolução*
+## 8. Conclusão
+
+O Mission Command Hub evoluiu de uma UI parcialmente mockada para uma base funcional, modular e significativamente mais performática.
+
+Os maiores ganhos desta sequência foram:
+- consolidação funcional da interface
+- organização da arquitetura de hooks/components
+- redução drástica do bundle inicial
+- eliminação de dependência pesada de animação
+- chunking limpo e previsível
+
+---
+
+*Documento vivo - atualizado após a rodada completa de melhorias contínuas.*
