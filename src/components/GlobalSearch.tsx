@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { Search, Command, Bot, Layers3, LayoutDashboard, Globe, Activity, Settings } from 'lucide-react'
 
+type View = 'dashboard' | 'agents' | 'mcp' | 'kanban' | 'integrations' | 'monitor' | 'framework' | 'settings'
+
 interface SearchResult {
   id: string
   type: 'view' | 'skill'
@@ -12,9 +14,10 @@ interface SearchResult {
 
 interface GlobalSearchProps {
   onClose: () => void
+  onNavigate: (view: View) => void
 }
 
-const views = [
+const views: { id: View; label: string; icon: React.ElementType; description: string }[] = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, description: 'Visão geral do sistema' },
   { id: 'agents', label: 'Agentes', icon: Bot, description: 'Gerenciar agentes' },
   { id: 'mcp', label: 'MCP', icon: Command, description: 'Model Context Protocol' },
@@ -33,7 +36,7 @@ const skills = [
   { id: 'analyst', label: 'Analyst', description: 'Análise de requisitos' },
 ]
 
-export default function GlobalSearch({ onClose }: GlobalSearchProps) {
+export default function GlobalSearch({ onClose, onNavigate }: GlobalSearchProps) {
   const [query, setQuery] = useState('')
   const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -45,21 +48,37 @@ export default function GlobalSearch({ onClose }: GlobalSearchProps) {
   const results = useMemo<SearchResult[]>(() => {
     if (!query.trim()) return []
     const q = query.toLowerCase()
-    const searchInItems = (
-      items: { id: string; label: string; description?: string; icon?: React.ElementType }[],
-      type: SearchResult['type'],
-      fallbackIcon: React.ElementType
-    ) => items.filter(item => item.label.toLowerCase().includes(q) || item.description?.toLowerCase().includes(q)).map(item => ({
-      id: `${type}-${item.id}`,
-      type,
-      label: item.label,
-      description: item.description,
-      icon: item.icon || fallbackIcon,
-      action: () => onClose()
-    }))
 
-    return [...searchInItems(views, 'view', LayoutDashboard), ...searchInItems(skills, 'skill', Layers3)].slice(0, 8)
-  }, [query, onClose])
+    const viewResults = views
+      .filter(item => item.label.toLowerCase().includes(q) || item.description.toLowerCase().includes(q))
+      .map(item => ({
+        id: `view-${item.id}`,
+        type: 'view' as const,
+        label: item.label,
+        description: item.description,
+        icon: item.icon,
+        action: () => {
+          onNavigate(item.id)
+          onClose()
+        }
+      }))
+
+    const skillResults = skills
+      .filter(item => item.label.toLowerCase().includes(q) || item.description.toLowerCase().includes(q))
+      .map(item => ({
+        id: `skill-${item.id}`,
+        type: 'skill' as const,
+        label: item.label,
+        description: item.description,
+        icon: Layers3,
+        action: () => {
+          onNavigate('framework')
+          onClose()
+        }
+      }))
+
+    return [...viewResults, ...skillResults].slice(0, 8)
+  }, [query, onClose, onNavigate])
 
   useEffect(() => {
     setSelectedIndex(0)

@@ -164,7 +164,16 @@ function AppContent() {
 
       <Suspense fallback={null}>
         <SettingsView isOpen={settingsOpen} onClose={() => setSettingsOpen(false)} />
-        {searchOpen && <GlobalSearch onClose={() => setSearchOpen(false)} />}
+        {searchOpen && (
+          <GlobalSearch
+            onClose={() => setSearchOpen(false)}
+            onNavigate={(view) => {
+              if (view === 'settings') setSettingsOpen(true)
+              else setCurrentView(view)
+              setSearchOpen(false)
+            }}
+          />
+        )}
       </Suspense>
       <KeyboardShortcutsHelp shortcuts={shortcuts} />
     </div>
